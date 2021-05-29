@@ -1,5 +1,7 @@
 const Utils = require('../utils');
 const JobRepository = require('./../repositories/jobRepository');
+const ProfileRepository = require('./../repositories/profileRepository');
+
 const viewsPath =`${__dirname}/../views`;
 
 const getStatus = (jobStatus) => {
@@ -50,6 +52,8 @@ module.exports = {
       };
     });
     
-    res.render(`${viewsPath}/index.ejs`, {jobs})
+    const profile = ProfileRepository.profile;
+
+    res.render(`${viewsPath}/index.ejs`, {profile, jobs})
   }
 }
