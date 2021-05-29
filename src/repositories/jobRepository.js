@@ -18,7 +18,7 @@ const JobRepository = {
     });
   },
   delete(job_id){
-    this.jobs = this.jobs.filter(job => job.id == job_id);
+    this.jobs = this.jobs.filter(job => job.id != job_id);
   },
   update(valuesToUpdate){
     const index = this.jobs.find(job => job.id == valuesToUpdate.id);
