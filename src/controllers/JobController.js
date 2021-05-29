@@ -1,6 +1,6 @@
 const Utils = require('../utils');
 const repository = require('./../repositories/jobRepository');
-const { user } = require('../repositories/profileRepository');
+const { profile } = require('../repositories/profileRepository');
 
 const viewsPath =`${__dirname}/../views`
 
@@ -8,6 +8,22 @@ const validateInput = (name, hours, total) => {
   if(name.trim() == "" || hours.trim() == "" || hours.trim() == "") {
     throw new Error('Preencha todos os campos');
   }
+}
+
+const buildJob = (req) => {
+    const name = req.body.name;
+    const dailyHours = req.body['daily-hours'];
+    const totalHours = req.body['total-hours'];
+    validateInput(name, dailyHours, totalHours);
+    
+    return {
+      name,
+      dailyHours: Number(dailyHours),
+      totalHours: Number(totalHours),
+      budget: totalHours * profile.valuePerHour * 100,
+      dueDate: Utils.addDays(totalHours/dailyHours).getTime(),
+      status: 'in-progress'
+    };
 }
 
 const JobController = {
@@ -20,7 +36,7 @@ const JobController = {
     if(!job) {
       throw new Error('Job não encontrado');
     }
-    console.log(job);
+
     const formattedBudget = Utils.formatCurrency(job.budget);
     job = {
       id: job.id,
@@ -30,33 +46,40 @@ const JobController = {
       "created-at": job.createdAt,
       "total-value": formattedBudget
     };
-console.log(job);
+
     res.render(`${viewsPath}/job-edit.ejs`, {job});
   },
   create(req, res) {
-    const name = req.body.name;
-    const dailyHours = req.body['daily-hours'];
-    const totalHours = req.body['total-hours'];
-    //validar os dados de entrada
     try{
-      validateInput(name, dailyHours, totalHours);
-
-      const job = {
-        name,
-        dailyHours: Number(dailyHours),
-        totalHours: Number(totalHours),
-        budget: totalHours * user.valuePerHour,
-        dueDate:Date.now().addDays(totalHours/dailyhours),
-        status: 'in-progress'
-      };
-
+      const job = buildJob(req);
       repository.create(job);
       res.redirect('/');
     }catch(err) {
       console.error(err.message);
       res.render(`${viewsPath}/job.ejs`, {error: err.message});
     }
-  }
+  },
+  update(req, res) {
+    const id = req.params.id;
+    try{
+      const job = buildJob(req);
+      repository.update({id,...job});
+      res.redirect('/');
+    }catch(err) {
+      console.error(err.message);
+      res.render(`${viewsPath}/job.ejs`, {error: err.message});
+    }
+  },
+  delete(req, res) {
+    const id = req.params.id;
+    try{
+      repository.delete(id);
+      res.redirect('/');
+    }catch(err) {
+      console.error(err.message);
+      res.render(`${viewsPath}/job.ejs`, {error: err.message});
+    }
+  },
 }
 
 module.exports = JobController;

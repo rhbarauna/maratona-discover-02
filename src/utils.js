@@ -3,8 +3,13 @@ module.exports = {
     const now = new Date();
     const limitDate = new Date(limitTimestamp);
     const difference = limitDate.getTime() - now.getTime();
-    const days = (difference / (1000 * 3600 * 24)).toFixed(); //convert to days millisecons * total minutes in one hour * 24 hours
+    const days = Math.ceil(difference / (1000 * 3600 * 24)); //convert to days millisecons * total minutes in one hour * 24 hours
     return Number(days);
+  },
+  addDays(days){
+    let result = new Date();
+    result.setDate(result.getDate() + days);
+    return result;
   },
   formatDate(date) {
     const splittedDate = date.split("-");

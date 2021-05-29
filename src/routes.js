@@ -10,6 +10,8 @@ router.get('/', IndexController.get);
 router.get('/job', JobController.get);
 router.post('/job', JobController.create);
 router.get('/job/edit/:id', JobController.find);
+router.post('/job/edit/:id', JobController.update);
+router.post('/job/delete/:id', JobController.delete);
 router.get('/profile', (req, res) => res.render(`${viewsPath}/profile.ejs`, { profile: profileRepository.profile}));
 router.get('/index', (req, res) => res.redirect('/'));
 
