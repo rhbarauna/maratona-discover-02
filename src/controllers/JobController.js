@@ -1,6 +1,6 @@
 const Utils = require('../Utils');
-const repository = require('../repositories/jobRepository');
-const { profile } = require('../repositories/profileRepository');
+const repository = require('../repositories/JobRepository');
+const { profile } = require('../repositories/ProfileRepository');
 
 const validateInput = (name, hours, total) => {
   if(name.trim() == "" || hours.trim() == "" || hours.trim() == "") {

@@ -1,20 +1,6 @@
 const Utils = require('../Utils');
-const JobRepository = require('../repositories/jobRepository');
-const ProfileRepository = require('../repositories/profileRepository');
-
-const getStatus = (jobStatus) => {
-  if(jobStatus == "done"){
-    return {
-      class: 'done',
-      description: 'Encerrado'
-    }
-  }
-
-  return {
-    class: 'progress',
-    description: 'Em andamento'
-  }
-}
+const JobRepository = require('../repositories/JobRepository');
+const ProfileRepository = require('../repositories/ProfileRepository');
 
 const remainingTime = (job) => {
 
@@ -32,11 +18,23 @@ const remainingTime = (job) => {
 module.exports = {
   get(_, res) {
     let jobs = JobRepository.get();
+    const profile = ProfileRepository.find();
+    let freeHours = profile.hoursPerDay;
+    
+    const statusCount = {
+      progress: 0,
+      done: 0,
+      total: jobs.length
+    }
+
     jobs = jobs.map(job => {
       const formattedBudget = Utils.formatCurrency(job.budget);
       const remaintinTimeDescription = remainingTime(job);
-      
-      let formattedStatus = getStatus(job.status);
+      const statusClass = job.status == "done" ? 'done' : 'progress';
+
+      statusCount[statusClass]  += 1;
+      freeHours -= job.status == "done" ? 0 : job.dailyHours;
+
       return {
         id: job.id,
         name: job.name,
@@ -45,13 +43,13 @@ module.exports = {
         "created-at": job.createdAt,
         "remaining-time": remaintinTimeDescription,
         "total-value": formattedBudget,
-        "status-class": formattedStatus.class,
-        "status-description": formattedStatus.description
+        "status-class": statusClass,
+        "status-description": statusClass == "done" ? 'Encerrado' : 'Em andamento',
       };
     });
     
-    const profile = ProfileRepository.find();
+    
 
-    res.render(`index`, {profile, jobs})
+    res.render(`index`, {profile, jobs, counter: statusCount, freeHours})
   }
 }

@@ -31,7 +31,13 @@
           <img id="logo" src="/images/logo.svg" alt="Logo" />
           <span id="notification">
             <img src="/images/alert-octagon.svg" alt="Alerta" />
-            Você tem 2 horas livres no seu dia
+            Você 
+              <% if(freeHours <=0 ) { %>
+                não tem
+              <%} else { %>
+                tem <%= freeHours %>
+              <%}%>
+            horas livres no seu dia
           </span>
           <a href="profile" id="avatar-profile">
             <p><%= profile.name %>  <span>Ver perfil</span></p>
@@ -48,15 +54,15 @@
 
           <div class="info">
             <div class="total">
-              <strong>12</strong>
+              <strong><%= counter.total %></strong>
               Projetos ao total
             </div>
             <div class="in-progress">
-              <strong>7</strong>
+              <strong><%= counter.progress %> </strong>
               Em andamento
             </div>
             <div class="finished">
-              <strong>4</strong>
+              <strong><%= counter.done %> </strong>
               Encerrados
             </div>
           </div>
@@ -74,37 +80,11 @@
       <main class="animate-up delay-2">
         <h1 class="sr-only">Trabalhos</h1>
         <!-- start cards -->
-        <% jobs.forEach(job => { %>
-          <div class="card <%= job['status-class'] %>" data-id="<%= job.id %> ">
-            <div class="id column"><%= job.id %></div>
-            <div class="name column">
-              <%= job.name %>
-            </div>
-            <div class="deadline column">
-              <span>Prazo</span>
-              <p><%= job["remaining-time"] %></p>
-            </div>
-            <div class="amount column">
-              <span>Valor</span>
-              <p><%= job["total-value"] %></p>
-            </div>
-            <div class="status badge column">
-              <%= job['status-description'] %> 
-            </div>
-            <div class="actions column flex">
-              <p class="sr-only">Ações</p>
-              <a 
-                href=<%=`/job/edit/${job.id}`%>
-                class="button white edit" 
-                title="Editar Job">
-                <img src="/images/edit-24.svg" alt="Editar Job" />
-              </a>
-              <button class="delete button white" title="Excluir Job">
-                <img src="/images/trash-24.svg" alt="Excluir Job" />
-              </button>
-            </div>
-          </div>
-        <%}) %>
+        <div class="cards">
+          <% jobs.forEach(job => { %>
+            <%- include('components/card', { job })%>
+          <%}) %>
+        </div>
         <!-- end cards -->
       </main>
     </div>

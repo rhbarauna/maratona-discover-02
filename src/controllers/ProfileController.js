@@ -1,4 +1,4 @@
-const ProfileRepository = require('../repositories/profileRepository');
+const ProfileRepository = require('../repositories/ProfileRepository');
 const Utils = require('../Utils');
 
 function validate(data) {

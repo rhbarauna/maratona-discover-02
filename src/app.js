@@ -13,7 +13,7 @@ app.use(router);//criar rotas
 app.listen(3001, () => console.log('rodando'));
 
 const now = new Date();
-const JobRepository = require('./repositories/jobRepository');
+const JobRepository = require('./repositories/JobRepository');
 JobRepository.create({ 
   id:1,
   name:"Pizzaria Guloso",
