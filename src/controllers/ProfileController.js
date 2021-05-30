@@ -1,5 +1,5 @@
 const ProfileRepository = require('../repositories/profileRepository');
-const Utils = require('../utils');
+const Utils = require('../Utils');
 
 function validate(data) {
   const {name, avatar, salary, hoursPerDay, daysPerWeek, vacationWeeksPerYear} = data;
@@ -15,7 +15,7 @@ module.exports = {
   get(_, res) {
     const profile = ProfileRepository.find();
     const formattedValuePerHour = Utils.formatCurrency(profile.valuePerHour);
-    res.render(`profile.ejs`, {profile: {...profile, formattedValuePerHour}})
+    res.render(`profile`, {profile: {...profile, formattedValuePerHour}})
   },
   update(req, res) {
     //receber os dados
@@ -58,7 +58,7 @@ module.exports = {
     catch(err) {
       console.error(err.message);
       const profile = ProfileRepository.find();
-      res.render(`profile.ejs`, {profile, error: err.message})
+      res.render(`profile`, {profile, error: err.message})
     }
     
     //calcular o valor baseado nos campos recebidos

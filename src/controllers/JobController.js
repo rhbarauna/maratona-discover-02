@@ -1,8 +1,6 @@
-const Utils = require('../utils');
-const repository = require('./../repositories/jobRepository');
+const Utils = require('../Utils');
+const repository = require('../repositories/jobRepository');
 const { profile } = require('../repositories/profileRepository');
-
-
 
 const validateInput = (name, hours, total) => {
   if(name.trim() == "" || hours.trim() == "" || hours.trim() == "") {
@@ -28,13 +26,14 @@ const buildJob = (req) => {
 //TODO - adicionar campo para valor por hora diferenciado por projeto. Criar um checkbox para habilitar o campo e persistir o valor enviado. Caso tenha um valor diferenciado, exibir nos detalhes do projeto mas nao na listagem junto
 const JobController = {
   get(req, res) {
-    res.render(`job.ejs`)
+    res.render(`job`)
   },
   find(req, res){
     let job = repository.find(req.params.id);
 
     if(!job) {
-      throw new Error('Job não encontrado');
+      return res.send('Job not found');
+      // throw new Error('Job não encontrado');
     }
 
     const formattedBudget = Utils.formatCurrency(job.budget);
@@ -47,7 +46,7 @@ const JobController = {
       "total-value": formattedBudget
     };
 
-    res.render(`job-edit.ejs`, {job});
+    res.render(`job-edit`, {job});
   },
   create(req, res) {
     try{
@@ -56,7 +55,7 @@ const JobController = {
       res.redirect('/');
     }catch(err) {
       console.error(err.message);
-      res.render(`job.ejs`, {error: err.message});
+      res.render(`job`, {error: err.message});
     }
   },
   update(req, res) {
@@ -67,7 +66,7 @@ const JobController = {
       res.redirect('/');
     }catch(err) {
       console.error(err.message);
-      res.render(`job.ejs`, {error: err.message});
+      res.render(`job`, {error: err.message});
     }
   },
   delete(req, res) {
@@ -77,7 +76,7 @@ const JobController = {
       res.redirect('/');
     }catch(err) {
       console.error(err.message);
-      res.render(`job.ejs`, {error: err.message});
+      res.render(`job`, {error: err.message});
     }
   },
 }

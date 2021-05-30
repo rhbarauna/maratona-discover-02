@@ -1,16 +1,16 @@
+let jobs = [];
 const JobRepository = {
-  jobs: [],
   get(){
-    return this.jobs;
+    return jobs;
   },
   find(job_id){
-    return this.jobs.find(job => job.id == job_id);
+    return jobs.find(job => job.id == job_id);
   },
   create(job){
-    const jobId = this.jobs[this.jobs.length-1]?.id + 1 || 1;
+    const jobId = jobs[jobs.length-1]?.id + 1 || 1;
     const now = Date.now();
 
-    this.jobs.push({
+    jobs.push({
       id: jobId,
       ...job,
       createdAt: now,
@@ -18,12 +18,12 @@ const JobRepository = {
     });
   },
   delete(job_id){
-    this.jobs = this.jobs.filter(job => job.id != job_id);
+    jobs = jobs.filter(job => job.id != job_id);
   },
   update(valuesToUpdate){
-    const index = this.jobs.find(job => job.id == valuesToUpdate.id);
+    const index = jobs.find(job => job.id == valuesToUpdate.id);
     let job = {
-      ...this.jobs[index],
+      ...jobs[index],
       name        : valuesToUpdate.name, 
       dailyHours  : valuesToUpdate.dailyHours,
       totalHours  : valuesToUpdate.totalHours,
@@ -33,7 +33,7 @@ const JobRepository = {
       status      : valuesToUpdate.status
     }
 
-    this.jobs[index] = job;
+    jobs[index] = job;
   },
 }
 

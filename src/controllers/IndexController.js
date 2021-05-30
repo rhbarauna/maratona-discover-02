@@ -1,4 +1,4 @@
-const Utils = require('../utils');
+const Utils = require('../Utils');
 const JobRepository = require('../repositories/jobRepository');
 const ProfileRepository = require('../repositories/profileRepository');
 
@@ -52,6 +52,6 @@ module.exports = {
     
     const profile = ProfileRepository.find();
 
-    res.render(`index.ejs`, {profile, jobs})
+    res.render(`index`, {profile, jobs})
   }
 }
