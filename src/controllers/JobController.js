@@ -1,6 +1,6 @@
 const Utils = require('../Utils');
 const repository = require('../repositories/JobRepository');
-const { profile } = require('../repositories/ProfileRepository');
+const ProfileRepository = require('../repositories/ProfileRepository');
 
 const validateInput = (name, hours, total) => {
   if(name.trim() == "" || hours.trim() == "" || hours.trim() == "") {
@@ -8,7 +8,8 @@ const validateInput = (name, hours, total) => {
   }
 }
 
-const buildJob = (req) => {
+const buildJob = async (req) => {
+    const profile = await ProfileRepository.find()
     const name = req.body.name;
     const dailyHours = req.body['daily-hours'];
     const totalHours = req.body['total-hours'];
@@ -18,7 +19,7 @@ const buildJob = (req) => {
       name,
       dailyHours: Number(dailyHours),
       totalHours: Number(totalHours),
-      budget: totalHours * profile.valuePerHour * 100,
+      budget: totalHours * profile.valuePerHour,
       dueDate: Utils.addDays(totalHours/dailyHours).getTime(),
       status: 'in-progress'
     };
@@ -28,8 +29,8 @@ const JobController = {
   get(req, res) {
     res.render(`job`)
   },
-  find(req, res){
-    let job = repository.find(req.params.id);
+  async find(req, res){
+    let job = await repository.find(req.params.id);
 
     if(!job) {
       return res.send('Job not found');
@@ -48,31 +49,31 @@ const JobController = {
 
     res.render(`job-edit`, {job});
   },
-  create(req, res) {
+  async create(req, res) {
     try{
-      const job = buildJob(req);
-      repository.create(job);
+      const job = await buildJob(req);
+      await repository.create(job);
       res.redirect('/');
     }catch(err) {
       console.error(err.message);
       res.render(`job`, {error: err.message});
     }
   },
-  update(req, res) {
-    const id = req.params.id;
+  async update(req, res) {
+    const id = Number(req.params.id);
     try{
-      const jobDTO = buildJob(req);
-      repository.update({id,...jobDTO});
+      const jobDTO = await buildJob(req);
+      await repository.update({id,...jobDTO});
       res.redirect('/');
     }catch(err) {
       console.error(err.message);
       res.render(`job`, {error: err.message});
     }
   },
-  delete(req, res) {
+  async delete(req, res) {
     const id = req.params.id;
     try{
-      repository.delete(id);
+      await repository.delete(id);
       res.redirect('/');
     }catch(err) {
       console.error(err.message);

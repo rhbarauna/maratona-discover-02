@@ -1,39 +1,62 @@
-let jobs = [];
+const Database = require('./../db/config');
+
 const JobRepository = {
-  get(){
-    return jobs;
+  async get(){
+    const db = await Database();
+    const jobs = await db.all(`SELECT * FROM jobs`);
+    await db.close();
+    return jobs.map(job => ({
+      id: job.id,
+      name: job.name,
+      dueDate: job.due_date,
+      dailyHours: job.daily_hours,
+      totalHours: job.total_hours,
+      budget: job.budget,
+      status: job.status
+    }));
   },
-  find(job_id){
-    return jobs.find(job => job.id == job_id);
+  async find(jobId) {
+    const db = await Database();
+    const job = await db.get(`SELECT * FROM jobs WHERE jobs.id = ${jobId}`)
+    await db.close();
+    
+    return {
+      id: job.id,
+      name: job.name,
+      dueDate: job.due_date,
+      dailyHours: job.daily_hours,
+      totalHours: job.total_hours,
+      budget: job.budget,
+      status: job.status
+    };
   },
-  create(job){
-    const jobId = jobs[jobs.length-1]?.id + 1 || 1;
+  async create(job){
     const now = Date.now();
-
-    jobs.push({
-      id: jobId,
-      ...job,
-      createdAt: now,
-      updatedAt: now
-    });
+    const db = await Database();
+    await db.run(`INSERT INTO jobs (name, daily_hours, total_hours, budget, status, due_date, created_at, updated_at) VALUES
+      ("${job.name}","${job.dailyHours}",${job.totalHours},${job.budget},"${job.status}",${job.dueDate},${now},${now})
+    `);
+    await db.close();
   },
-  delete(job_id){
-    jobs = jobs.filter(job => job.id != job_id);
+  async delete(jobId){
+    const db = await Database();
+    await db.get(`DELETE FROM jobs WHERE jobs.id = ${jobId}`)
+    await db.close();
   },
-  update(valuesToUpdate){
-    const index = jobs.findIndex(job => job.id == valuesToUpdate.id);
-    let job = {
-      ...jobs[index],
-      name        : valuesToUpdate.name, 
-      dailyHours  : valuesToUpdate.dailyHours,
-      totalHours  : valuesToUpdate.totalHours,
-      budget      : valuesToUpdate.budget,
-      updatedAt   : valuesToUpdate.dueDate,
-      dueDate     : valuesToUpdate.dueDate,
-      status      : valuesToUpdate.status
-    }
+  async update(valuesToUpdate){
+    const db = await Database();
 
-    jobs[index] = job;
+    await db.run(`UPDATE jobs SET 
+      name = "${valuesToUpdate.name}",
+      daily_hours = ${valuesToUpdate.dailyHours},
+      total_hours = ${valuesToUpdate.totalHours},
+      budget = ${valuesToUpdate.budget},
+      status = "${valuesToUpdate.status}",
+      due_date = ${valuesToUpdate.dueDate},
+      updated_at = ${Date.now()}
+      WHERE jobs.id = ${valuesToUpdate.id}
+    `);
+    await db.close();
   },
 }
 

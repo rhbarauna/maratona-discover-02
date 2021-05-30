@@ -1,18 +1,31 @@
-let profile = {
-  name: 'Rhenato',
-  avatar: 'https://github.com/rhbarauna.png',
-  valuePerHour: 1875,
-  salary:300000,
-  hoursPerDay:8,
-  daysPerWeek:5,
-  vacationWeeksPerYear:4
-}
+const Database = require('./../db/config');
 
 module.exports = {
-  find() {
-    return profile;
+  async find() {
+    const db = await Database();
+    const profile = await db.get(`SELECT * FROM profile`);
+    await db.close();
+    return {
+      name: profile.name,
+      avatar: profile.avatar,
+      valuePerHour: profile.value_per_hour,
+      monthlyBudget: profile.monthly_budget,
+      hoursPerDay: profile.hours_per_day,
+      daysPerWeek: profile.days_per_week,
+      vacationPerYear: profile.vacation_per_year
+    };
   },
-  update(updatedProfile) {
-    profile = updatedProfile;
+  async update(updatedProfile) {
+    const db = await Database();
+    await db.run(`UPDATE profile SET 
+      name = "${updatedProfile.name}",
+      avatar = "${updatedProfile.avatar}",
+      value_per_hour = ${updatedProfile.valuePerHour},
+      monthly_budget = ${updatedProfile.monthlyBudget},
+      hours_per_day = ${updatedProfile.hoursPerDay},
+      days_per_week = ${updatedProfile.daysPerWeek},
+      vacation_per_year = ${updatedProfile.vacationPerYear}
+    `);
+    await db.close();
   }
 };

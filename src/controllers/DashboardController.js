@@ -16,9 +16,9 @@ const remainingTime = (job) => {
 }
 
 module.exports = {
-  get(_, res) {
-    let jobs = JobRepository.get();
-    const profile = ProfileRepository.find();
+  async get(_, res) {
+    let jobs = await JobRepository.get();
+    const profile = await ProfileRepository.find();
     let freeHours = profile.hoursPerDay;
     
     const statusCount = {
