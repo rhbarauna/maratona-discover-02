@@ -37,15 +37,14 @@ module.exports = {
       const totalWorkedDays = totalWeeksWorkedPerYear * daysPerWeek;
       const totalWorkedHours = totalWorkedDays * hoursPerDay;
       const workedHoursPerMonth = totalWorkedHours / 12;
-
-      const valuePerHour = salary/workedHoursPerMonth;
+      const valuePerHour = (salary/workedHoursPerMonth).toFixed(2).replace('.', '');
       
       let profile = ProfileRepository.find();
       profile = {
         ...profile,
         name, 
         avatar,
-        valuePerHour,
+        valuePerHour: Number(valuePerHour),
         salary,
         hoursPerDay,
         daysPerWeek,
