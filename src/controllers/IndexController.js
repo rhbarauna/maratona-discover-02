@@ -1,8 +1,6 @@
 const Utils = require('../utils');
-const JobRepository = require('./../repositories/jobRepository');
-const ProfileRepository = require('./../repositories/profileRepository');
-
-const viewsPath =`${__dirname}/../views`;
+const JobRepository = require('../repositories/jobRepository');
+const ProfileRepository = require('../repositories/profileRepository');
 
 const getStatus = (jobStatus) => {
   if(jobStatus == "done"){
@@ -52,8 +50,8 @@ module.exports = {
       };
     });
     
-    const profile = ProfileRepository.profile;
+    const profile = ProfileRepository.find();
 
-    res.render(`${viewsPath}/index.ejs`, {profile, jobs})
+    res.render(`index.ejs`, {profile, jobs})
   }
 }
