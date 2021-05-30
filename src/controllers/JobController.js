@@ -61,8 +61,8 @@ const JobController = {
   update(req, res) {
     const id = req.params.id;
     try{
-      const job = buildJob(req);
-      repository.update({id,...job});
+      const jobDTO = buildJob(req);
+      repository.update({id,...jobDTO});
       res.redirect('/');
     }catch(err) {
       console.error(err.message);

@@ -21,7 +21,7 @@ const JobRepository = {
     jobs = jobs.filter(job => job.id != job_id);
   },
   update(valuesToUpdate){
-    const index = jobs.find(job => job.id == valuesToUpdate.id);
+    const index = jobs.findIndex(job => job.id == valuesToUpdate.id);
     let job = {
       ...jobs[index],
       name        : valuesToUpdate.name, 
